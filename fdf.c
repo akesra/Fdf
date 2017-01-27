@@ -6,7 +6,7 @@
 /*   By: akesraou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/25 14:29:00 by akesraou          #+#    #+#             */
-/*   Updated: 2017/01/26 12:18:35 by akesraou         ###   ########.fr       */
+/*   Updated: 2017/01/27 12:36:42 by akesraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef		struct	s_env
 	int		xx1;
 	int		yy0;
 	int		yy1;
+	int		spacing;
 }					t_env;
 
 
@@ -97,21 +98,24 @@ void		ft_stock_map(t_env *e, char **tmp, int y, int x)
 void		ft_map(t_env *e, char *argv)
 {
 	int y;
+	int x;
 	char **tmp;
 	int fd;
 	char *line = NULL;
 
 	fd = open(argv, O_RDONLY);
+	x = 0;
 	y = 0;
 	tmp = NULL;
 	e->array = (int**)malloc(sizeof(int*) * e->ymax); //+1 pas utile..
 	while ((get_next_line(fd, &line)) > 0)
 	{
-		e->array[y] = (int*)malloc(sizeof(int) * e->xmax + 1);
+		e->array[x] = (int*)malloc(sizeof(int) * e->xmax + 1);
 		tmp = ft_strsplit(line, ' ');
 		ft_stock_map(e, tmp, y, 0);
 		ft_strdel(tmp);
 		ft_strdel(&line);
+		x++;
 		y++;
 	}
 	close(fd);
@@ -158,27 +162,38 @@ void	ft_draw_lines(t_env *e)
 	}
 }
 
-void	ft_isomeshit(t_env *e, int *x0, int *y0, int i)
+void	ft_isomeshit(t_env *e, int *x0, int *y0, int i, int h)
 {
 	int x1;
 	int y1;
-	//formule isometrie  http://clintbellanger.net/articles/isometric_math/
-	//fait ces calculs a la main pour qlq points pour voir comment ca fonctionne
-	e->xx0 = (*x0 - *y0) * 20;
-	e->yy0 = (*x0 + *y0) * 20;
-	if (i == 1) //iso qui s'affiche sur la gauche de la fenetre..
+	e->xx0 = (((*x0 + e->xmax) - *y0) * 40);
+	if (i == 1)
 	{
-		x1 = *x0 + 1;
+		e->yy0 = (((*x0 + e->xmax) + *y0) * 20);// - e->array[*y0][*x0 + 1] * 25;
+		x1 = (*x0 + 1) + e->xmax;
 		y1 = *y0;
-		e->xx1 = (x1 - y1) * 20;// - e->array[*y0][*x0 + 1] * 2;
-		e->yy1 = ((x1 + y1) * 20) - e->array[*y0][*x0 + 1] * 2; // le tableau contient donc la valeur du z (0 ou 10 pour 42.fdf). tu peux faire" - e->array.. " pour la profondeur, si tu fais "*" ca marchera pas car ca fausse l'equation
+		e->xx1 = ((x1 - y1) * 40);
+		e->yy1 = ((x1 + y1) * 20) - e->array[*y0][*x0 + 1] * 25;
+		if (h == 1)
+		{
+			e->yy0 = (((*x0 + e->xmax) + *y0) * 20) - e->array[*y0][*x0 + 1] * 25;
+			e->xx1 = ((x1 - y1) * 40);
+			e->yy1 = ((x1 + y1) * 20) - e->array[*y0][*x0 + 1] * 25;
+		}
 	}
-	if (i == 0)// iso qui s'affiche sur la droite de la fenetre..
+	if (i == 0)
 	{
-		x1 = *x0;
+		e->yy0 = (((*x0 + e->xmax) + *y0) * 20);// - e->array[*y0 + 1][*x0] * 25;
+		x1 = *x0 + e->xmax;
 		y1 = *y0 + 1;
-		e->xx1 = (x1 - y1) * 20;// - e->array[*y0 + 1][*x0] * 2;
-		e->yy1 = ((x1 + y1) * 20) - e->array[*y0 + 1][*x0] * 2;
+		e->xx1 = ((x1 - y1) * 40);
+		e->yy1 = ((x1 + y1) * 20) - e->array[*y0 + 1][*x0] * 25;
+		if (h == 1)
+		{
+			e->yy0 = (((*x0 + e->xmax) + *y0) * 20) - e->array[*y0 + 1][*x0] * 25;
+			e->xx1 = ((x1 - y1) * 40);
+			e->yy1 = ((x1 + y1) * 20) - e->array[*y0 + 1][*x0] * 25;
+		}
 	}
 }
 
@@ -188,7 +203,7 @@ int		ft_draw_map_into_img(t_env *e)
 	int y;
 
 	y = 0;
-	e->img = mlx_new_image(e->mlx, 1000, 800);
+	e->img = mlx_new_image(e->mlx, 2000, 1000);
 	e->data = mlx_get_data_addr(e->img, &e->bpp, &e->size_line, &e->endian);
 	while (y < e->ymax)
 	{
@@ -197,12 +212,16 @@ int		ft_draw_map_into_img(t_env *e)
 		{
 			if (x + 1 < e->xmax)
 			{
-				ft_isomeshit(e, &x, &y, 1);
+				ft_isomeshit(e, &x, &y, 1, 0);
+				ft_draw_lines(e);
+				ft_isomeshit(e, &x, &y, 1, 1);
 				ft_draw_lines(e);
 			}
 			if (y + 1 < e->ymax)
 			{
-				ft_isomeshit(e, &x, &y, 0);
+				ft_isomeshit(e, &x, &y, 0, 0);
+				ft_draw_lines(e);
+				ft_isomeshit(e, &x, &y, 0, 1);
 				ft_draw_lines(e);
 			}
 			x++;
@@ -227,6 +246,7 @@ int		main(int argc, char **argv)
 	e->mlx = mlx_init();
 	ft_xymax(e, argv[1]);
 	ft_map(e, argv[1]);
+	e->spacing = 5000 / e->xmax;
 	int i = 0;
 	while (i < e->ymax)
 	{
@@ -239,7 +259,7 @@ int		main(int argc, char **argv)
 		printf("\n");
 		i++;
 	}
-	e->win = mlx_new_window(e->mlx, 1000, 800, "FdF");
+	e->win = mlx_new_window(e->mlx, 5000, 1000, "FdF");
 	mlx_key_hook(e->win, key_fonction, e);
 	ft_draw_map_into_img(e);
 	mlx_loop(e->mlx);
