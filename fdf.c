@@ -6,7 +6,7 @@
 /*   By: akesraou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/25 14:29:00 by akesraou          #+#    #+#             */
-/*   Updated: 2017/02/01 12:31:20 by akesraou         ###   ########.fr       */
+/*   Updated: 2017/02/02 09:35:12 by akesraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,15 +33,15 @@ int		ft_draw_lines(t_env *e)
 		if (e->xx0 == e->xx1 && e->yy0 == e->yy1) 
 			return (0);
 		e2 = err;
-		if (e2 >-dx)
+		if (e2 > -dx)
 		{
-			err -= dy;
-			e->xx0 += sx;
+			err = err - dy;
+			e->xx0 = e->xx0 + sx;
 		}
 		if (e2 < dy)
 		{
-			err += dx;
-			e->yy0 += sy;
+			err = err + dx;
+			e->yy0 = e->yy0 + sy;
 		}
 	}
 	return (0);
@@ -51,21 +51,21 @@ void	ft_isomeshit(t_env *e, int *x0, int *y0, int i)
 {
 	int x1;
 	int y1;
-	e->xx0 = ((*x0 + e->xmax) - *y0) * e->iso + e->right; /*+ 300*/;
-	e->yy0 = (((*x0 + e->xmax) + *y0) * e->iso + e->vertical) - e->array[*y0][*x0] * e->deep;
+	e->xx0 = ((*x0 + e->xmax) - *y0) * e->iso /*+ e->right*/ + 100;
+	e->yy0 = (((*x0 + e->xmax) + *y0) * e->iso /*+ e->vertical*/) - e->array[*y0][*x0] * e->deep;
 	if (i == 1)
 	{
 		x1 = (*x0 + 1) + e->xmax;
 		y1 = *y0;
-		e->xx1 = (x1 - y1) * e->iso + e->right; /*+ 300*/;
-		e->yy1 = ((x1 + y1) * e->iso + e->vertical) - e->array[*y0][*x0 + 1] * e->deep;
+		e->xx1 = (x1 - y1) * e->iso /*+ e->right*/ + 100;
+		e->yy1 = ((x1 + y1) * e->iso/* + e->vertical*/) - e->array[*y0][*x0 + 1] * e->deep;
 	}
 	if (i == 0)
 	{
 		x1 = *x0 + e->xmax;
 		y1 = *y0 + 1;
-		e->xx1 = (x1 - y1) * e->iso + e->right;/* + 300*/;
-		e->yy1 = ((x1 + y1) * e->iso + e->vertical) - e->array[*y0 + 1][*x0] * e->deep;
+		e->xx1 = (x1 - y1) * e->iso /*+ e->right*/ + 100;
+		e->yy1 = ((x1 + y1) * e->iso/* + e->vertical*/) - e->array[*y0 + 1][*x0] * e->deep;
 	}
 }
 
@@ -127,10 +127,11 @@ int		main(int argc, char **argv)
 	}*/
 	e->win = mlx_new_window(e->mlx, 1000, 1000, "FdF");
 	mlx_key_hook(e->win, key_fonction, e);
-//	e->img = mlx_new_image(e->mlx, 1000, 1000);
-//	e->data = mlx_get_data_addr(e->img, &e->bpp, &e->size_line, &e->endian);
-	mlx_loop_hook(e->mlx, loop_hook, e);
-//	mlx_put_image_to_window(e->mlx, e->win, e->img, 0, 0);
+	e->img = mlx_new_image(e->mlx, 1000, 1000);
+	e->data = mlx_get_data_addr(e->img, &e->bpp, &e->size_line, &e->endian);
+	ft_draw_map_into_img(e);
+	//	mlx_loop_hook(e->mlx, loop_hook, e);
+	mlx_put_image_to_window(e->mlx, e->win, e->img, e->right + (e->ymax - e->xmax), e->vertical);
 	mlx_loop(e->mlx);
 	return (0);
 }

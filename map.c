@@ -6,7 +6,7 @@
 /*   By: akesraou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/01 07:19:55 by akesraou          #+#    #+#             */
-/*   Updated: 2017/02/01 10:45:16 by akesraou         ###   ########.fr       */
+/*   Updated: 2017/02/01 18:39:37 by akesraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ int	ft_xymax(t_env *e, char *argv)
 
 	y = 0;
 	fd = open(argv, O_RDONLY);
+	if (fd == -1)
+	{
+		ft_putstr("No file found.\n");
+		return (-1);
+	}
 	while ((get_next_line(fd, &line)) > 0)
 	{
 		xline = ft_find_xmax(line);
@@ -50,11 +55,16 @@ int	ft_xymax(t_env *e, char *argv)
 			h = xline;
 		if (xline != h)
 		{
-			ft_putstr("wrong size of line. Exiting\n");
+			ft_putstr("Wrong size of line. Exit.\n");
 			return (-1);
 		}
 		ft_strdel(&line);
 		y++;
+	}
+	if (xline == 0 && y == 0)
+	{
+		ft_putstr("No data found.\n");
+		return (-1);
 	}
 	close(fd);
 	e->xmax = xline;
