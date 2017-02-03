@@ -6,36 +6,13 @@
 /*   By: akesraou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/25 14:29:00 by akesraou          #+#    #+#             */
-/*   Updated: 2017/02/03 12:04:52 by akesraou         ###   ########.fr       */
+/*   Updated: 2017/02/03 14:46:48 by akesraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	ft_init(t_env *e)
-{
-	e->r = 100;
-	e->g = 100;
-	e->b = 100;
-	e->h = 0;
-	e->color = 0;
-	e->deep = 1;
-	e->right = 80;
-	e->menu = 0;
-	if (e->xmax > 20)
-		e->vertical = e->xmax * 0.5;
-	else
-		e->vertical = e->xmax * - 10;
-	if (e->xmax > 200)
-	{
-		e->iso = 1;
-		e->deep = 0.9;
-	}
-	else
-		e->iso = 600 / sqrt(e->xmax * e->xmax + e->ymax * e->ymax);
-}
-
-int	ft_find_xmax(char *line)
+int		ft_find_xmax(char *line)
 {
 	int i;
 	int nx;
@@ -56,35 +33,9 @@ int	ft_find_xmax(char *line)
 	return (nx);
 }
 
-int	ft_xymax(t_env *e, char *argv)
+int		ft_close_file(t_env *e, int xline, int y, int fd)
 {
-	int fd;
-	int xline;
-	char *line = NULL;
-	int y;
-	int h;
-
-	y = 0;
-	fd = open(argv, O_RDONLY);
-	if (fd == -1)
-	{
-		ft_putstr("No file found.\n");
-		return (-1);
-	}
-	while ((get_next_line(fd, &line)) > 0)
-	{
-		xline = ft_find_xmax(line);
-		if (y == 0)
-			h = xline;
-		if (xline != h)
-		{
-			ft_putstr("Wrong size of line. Exit.\n");
-			return (-1);
-		}
-		ft_strdel(&line);
-		y++;
-	}
-	if (xline == 0 && y == 0)
+	if (xline < 2 && y < 2)
 	{
 		ft_putstr("No data found.\n");
 		return (-1);
@@ -92,17 +43,55 @@ int	ft_xymax(t_env *e, char *argv)
 	close(fd);
 	e->xmax = xline;
 	e->ymax = y;
-	ft_putstr("xmax: ");
-	ft_putnbr(xline);
-	ft_putchar('\n');
-	ft_putstr("ymax: ");
-	ft_putnbr(y);
+	return (0);
+}
+
+int		ft_gnl(t_env *e, int fd, char *line)
+{
+	int y;
+	int h;
+	int xline;
+
+	y = 0;
+	while ((get_next_line(fd, &line)) > 0)
+	{
+		xline = ft_find_xmax(line);
+		if (y == 0)
+			h = xline;
+		if (xline != h || xline > 500)
+		{
+			ft_putstr("Wrong size of line. Exit.\n");
+			return (-1);
+		}
+		ft_strdel(&line);
+		y++;
+	}
+	if (ft_close_file(e, xline, y, fd) == -1)
+		return (-1);
+	return (0);
+}
+
+int		ft_xymax(t_env *e, char *argv)
+{
+	int		fd;
+	char	*line;
+
+	line = NULL;
+	fd = open(argv, O_RDONLY);
+	if (fd == -1)
+	{
+		ft_putstr("No file found.\n");
+		return (-1);
+	}
+	if (ft_gnl(e, fd, line) == -1)
+		return (-1);
 	return (0);
 }
 
 int		main(int argc, char **argv)
 {
 	t_env	*e;
+
 	if (argc != 2)
 	{
 		ft_putstr("usage: ./fdf input_file\n");

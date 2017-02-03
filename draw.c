@@ -6,7 +6,7 @@
 /*   By: akesraou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/02 09:55:20 by akesraou          #+#    #+#             */
-/*   Updated: 2017/02/03 12:01:57 by akesraou         ###   ########.fr       */
+/*   Updated: 2017/02/03 15:41:10 by akesraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	ft_isometric(t_env *e, int x0, int y0, int i)
 	}
 }
 
-int		ft_draw_map_into_img(t_env *e)
+int				ft_draw_map_into_img(t_env *e)
 {
 	int x;
 	int y;

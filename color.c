@@ -6,7 +6,7 @@
 /*   By: akesraou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/03 11:25:24 by akesraou          #+#    #+#             */
-/*   Updated: 2017/02/03 12:00:56 by akesraou         ###   ########.fr       */
+/*   Updated: 2017/02/03 14:12:49 by akesraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ void	ft_color2(t_env *e, int x0, int y0, int i)
 	}
 }
 
-void    ft_color(t_env *e, int x0, int y0, int i)
+void	ft_color(t_env *e, int x0, int y0, int i)
 {
 	if (i == 0)
 	{

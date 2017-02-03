@@ -6,7 +6,7 @@
 /*   By: akesraou <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/02 09:57:24 by akesraou          #+#    #+#             */
-/*   Updated: 2017/02/03 12:23:59 by akesraou         ###   ########.fr       */
+/*   Updated: 2017/02/03 14:15:00 by akesraou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	ft_depth_change(int keycode, t_env *e)
 	{
 		if (e->xmax >= 30)
 		{
-			if (e->deep > - e->xmax / e->xmax)
+			if (e->deep > -e->xmax / e->xmax)
 			{
 				e->deep = e->deep - 0.3;
 				ft_clear_and_put(e);
@@ -77,9 +77,9 @@ void	ft_depth_change(int keycode, t_env *e)
 		}
 		else if (e->xmax < 30)
 		{
-			if (e->deep > - e->xmax / 2 - 1)
+			if (e->deep > -e->xmax / 2 - 1)
 			{
-				e->deep = e->deep -1;
+				e->deep = e->deep - 1;
 				ft_clear_and_put(e);
 			}
 		}
@@ -97,7 +97,8 @@ void	ft_vertical_change(int keycode, t_env *e)
 		if (e->menu == 0)
 			ft_menu(e);
 		else if (e->menu == 1)
-			mlx_string_put(e->mlx, e->win, 1000, 1260, 255255255, "*Afficher le menu:   m");
+			mlx_string_put(e->mlx, e->win, 1000, 1260, 255255255,
+					"*Afficher le menu:   m");
 	}
 	if (keycode == 126)
 	{
@@ -107,10 +108,12 @@ void	ft_vertical_change(int keycode, t_env *e)
 		if (e->menu == 0)
 			ft_menu(e);
 		else if (e->menu == 1)
-			mlx_string_put(e->mlx, e->win, 1000, 1260, 255255255, "*Afficher le menu:   m");
+			mlx_string_put(e->mlx, e->win, 1000, 1260, 255255255,
+					"*Afficher le menu:   m");
 	}
 }
-void    ft_right_change(int keycode, t_env *e)
+
+void	ft_right_change(int keycode, t_env *e)
 {
 	if (keycode == 124)
 	{
@@ -120,7 +123,8 @@ void    ft_right_change(int keycode, t_env *e)
 		if (e->menu == 0)
 			ft_menu(e);
 		else if (e->menu == 1)
-			mlx_string_put(e->mlx, e->win, 1000, 1260, 255255255, "*Afficher le menu:   m");
+			mlx_string_put(e->mlx, e->win, 1000, 1260, 255255255,
+					"*Afficher le menu:   m");
 	}
 	if (keycode == 123)
 	{
@@ -130,6 +134,7 @@ void    ft_right_change(int keycode, t_env *e)
 		if (e->menu == 0)
 			ft_menu(e);
 		else if (e->menu == 1)
-			mlx_string_put(e->mlx, e->win, 1000, 1260, 255255255, "*Afficher le menu:   m");
+			mlx_string_put(e->mlx, e->win, 1000, 1260, 255255255,
+					"*Afficher le menu:   m");
 	}
 }
